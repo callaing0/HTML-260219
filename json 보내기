@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #wrap {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        img {
+            width: 100%;
+            display: block;
+        }
+
+        .left {
+            width: 400px;
+            position: relative;
+        }
+
+        .slideBox {
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            height: 400px; 
+        }
+
+        .slide { 
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            position: absolute;
+            width: 300%; 
+            left: 0;
+            top: 0;
+            transition: 0.5s; 
+        }
+
+        .item {
+            width: 400px; 
+            flex-shrink: 0; 
+        }
+
+        .right {
+            flex: 1;
+        }
+
+        .right div {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrap">
+        <div class="left">
+            <div class="slideBox">
+                <ul class="slide">
+                    <li class="item">
+                        <img class="img-item">
+                    </li>
+                    <li class="item">
+                        <img class="img-item">
+                    </li>
+                    <li class="item">
+                        <img class="img-item">
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="right">
+            <input type="hidden" id="price" value="35000">
+            <h3>아디다스 신발 재입고!</h3>
+            <p>가격 : 35,000원</p>
+            <div>
+                <select id="size">
+                    <option value="260">260</option>
+                    <option value="270">270</option>
+                    <option value="280">280</option>
+                    <option value="290">290</option>
+                </select>
+            </div>
+            <div>
+                수량 : <input type="number" id="amount" min="1" max="10" value="1">
+            </div>
+            <button id="cart">장바구니에 담기</button>
+            <button id="buy">구매</button>
+        </div>
+    </div>
+
+    <script>
+        
+        const cartURL = "장바구니 주소";
+        //장바구니 버튼 클릭 시, 장바구니에 저장(선택한 값을 서버에 전달)
+        document.querySelector("#cart").addEventListener("click", cartSave);
+    
+        async function cartSave(){
+            let price = document.getElementById("price").value;
+            let amount = document.getElementById("amount").value;
+            let size = document.getElementById("size").value;
+
+            //객체 생성 및 json 변환
+            let data = {
+                itemPrice : price,
+                itemAmount : amount,
+                itemSize : size
+            };
+
+            let jsonData = JSON.stringify(data);
+
+            try {
+                const response = await fetch("http://dwstd.ipdisk.co.kr/dataview/test.php", {
+                    method: "POST", 
+                    headers: { "Content-Type": "application/json" }, 
+                    body: jsonData
+                });
+                
+                if(response.ok) {
+                    let isMove = alert("장바구니에 담겼습니다!");
+                    if (isMove) location.href = "cartURL";
+                }
+            } catch (error) {
+                console.error("장바구니에 담기 실패", error);
+            }
+        }
+
+        // 1. 이미지 리스트 및 초기화
+        const imgList = ["1.jpg", "2.jpg", "3.jpg"];
+        const items = document.querySelectorAll(".img-item");
+
+        items.forEach((item, index) => {
+            if (imgList[index]) {
+                item.src = "./" + imgList[index];
+            }
+        });
+
+        // 2. 슬라이드 로직
+        const slide = document.querySelector(".slide");
+        let currentIndex = 0; 
+        const slideWidth = 400; 
+        
+        setInterval(function() {
+            currentIndex++; 
+            if (currentIndex >= imgList.length) {
+                currentIndex = 0;
+            }
+            slide.style.left = -(currentIndex * slideWidth) + "px";
+        }, 3000); 
+    </script>
+</body>
+</html>
