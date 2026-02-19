@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON 데이터 테이블 표시</title>
+    <style>
+
+        #infoTable {
+            width: 500px;
+            border-collapse: collapse; 
+            margin: 20px auto;
+        }
+
+        #infoTable th, #infoTable td {
+            border-top: 1px solid #aaa;
+            padding: 8px 0;
+            text-align: center;
+        }
+
+        .num { width: 100px; }
+        .name { width: 250px; }
+        .score { width: 150px; }
+    </style>
+</head>
+<body>
+    <div id="wrap">
+        <table id="infoTable">
+            <thead>
+                <tr>
+                    <th class="num">ID</th>
+                    <th class="name">이름</th>
+                    <th class="score">점수</th>
+                </tr>
+            </thead>
+            <tbody id="info"></tbody>
+        </table>
+    </div>
+
+    <script>
+        dataLoad();
+
+        // 서버에서 데이터 받아오기
+        async function dataLoad() {
+            try {
+                const response = await fetch("testone.json");
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("Success:", data);
+
+                renderTable(data);
+                
+            } catch (error) {
+                console.error("Could not fetch data:", error);
+            }
+        }
+
+        // 테이블에 데이터를 넣어주는 함수
+    function renderTable(data) {
+    const tableBody = document.getElementById("info");
+
+    const row = `
+        <tr>
+            <td>${data.id}</td>
+            <td>${data.name}</td>
+            <td>${data.score}</td>
+        </tr>
+    `;
+
+    tableBody.innerHTML = row;
+}
+    </script>
+</body>
+</html>
